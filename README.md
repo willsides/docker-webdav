@@ -12,7 +12,8 @@ You can configure the authentication type, the authentication of multiple users,
     1. [Table of Content](#table-of-content)
     2. [Usage / Installation](#usage--installation)
         1. [Basic WebDAV server](#basic-webdav-server)
-            1. [Via Docker Compose](#via-docker-compose)
+            1. [Docker Run](#docker-run)
+            2. [Docker Compose](#docker-compose)
         2. [Secure WebDAV with SSL](#secure-webdav-with-ssl)
         3. [Authenticate Multiple Clients](#authenticate-multiple-clients)
         4. [Environment Variables](#environment-variables)
@@ -27,39 +28,27 @@ When using unencrypted HTTP, use `Digest` authentication (instead of `Basic`) to
 
 To make sure your data doesn't get deleted, you'll probably want to create a persistent storage volume (`-v webdav-data:/var/lib/dav`) or bind mount a directory (`-v /path/to/directory:/var/lib/dav`):
 
+#### Docker Run
+
 ``` Docker
 docker run --restart always -v /srv/dav:/var/lib/dav \
-    -e AUTH_TYPE=Digest -e USERNAME=alice -e PASSWORD=secret1234 \
+    -e AUTH_TYPE=Digest -e USERNAME=Alice -e PASSWORD=Secret123! \
     --publish 80:80 -d bytemark/webdav
 ```
 
-#### Via Docker Compose
+#### Docker Compose
 
-``` Docker Compose
-version: '3'
-services:
-  webdav:
-    image: jadinheaston/webdav
-    restart: always
-    ports:
-      - "80:80"
-    environment:
-      AUTH_TYPE: Digest
-      USERNAME: alice
-      PASSWORD: secret1234!
-    volumes:
-      - webdav-data:/var/lib/dav
-```
+Utilize the [docker-compose.yml](docker-compose.yml) file and use: `docker compose up -d`
 
 ### Secure WebDAV with SSL
 
 We recommend you use a reverse proxy (eg, NGINX) to handle SSL certificates. You can see an example of how to do that [here](https://github.com/BytemarkHosting/configs-webdav-docker).
 
-If you're happy with a self-signed SSL certificate, specify `-e SSL_CERT=selfsigned` and the container will generate one for you.
+Alternatively, the container can create a self-signed SSL certificate by specifying `-e SSL_CERT=selfsigned`.
 
 ``` Docker
 docker run --restart always -v webdav-data:/var/lib/dav \
-    -e AUTH_TYPE=Basic -e USERNAME=test -e PASSWORD=test \
+    -e AUTH_TYPE=Basic -e USERNAME=Alice -e PASSWORD=Secret123! \
     -e SSL_CERT=selfsigned --publish 443:443 -d bytemark/webdav
 ```
 
@@ -73,7 +62,7 @@ If using `Basic` authentication, run the following commands:
 
 ``` sh
 touch user.passwd
-htpasswd -B user.passwd alice
+htpasswd -B user.passwd Alice
 htpasswd -B user.passwd bob
 ```
 
@@ -81,7 +70,7 @@ If using `Digest` authentication, run the following commands. (NB: The default `
 
 ``` sh
 touch user.passwd
-htdigest user.passwd WebDAV alice
+htdigest user.passwd WebDAV Alice
 htdigest user.passwd WebDAV bob
 ```
 
