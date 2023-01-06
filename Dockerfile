@@ -49,7 +49,7 @@ RUN set -ex; \
     ln -s ../sites-available/default.conf "conf/sites-enabled"; \
     # Install openssl if we need to generate a self-signed certificate.
     apk add --no-cache openssl; \
-    apk add --no-cache apr-util;
+    apk add --no-cache apr-util-bdb;
 
 # Adding entrypoint and updating permissions.
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
