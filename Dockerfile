@@ -45,6 +45,8 @@ RUN set -ex; \
     apt-get upgrade; \
     apt-get install -y \
     openssl \
+    libapr1 \
+    libapr1-dev \
     && rm -rf /var/lib/apt/lists/*;
 
 # Adding entrypoint and updating permissions.
