@@ -51,7 +51,7 @@ RUN set -ex; \
     apk update; \
     apk upgrade; \
     apk add --no-cache openssl; \
-    apk add --no-cache apr-util-bdb;
+    apk add --no-cache apr-util;
 
 # Adding entrypoint and updating permissions.
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
