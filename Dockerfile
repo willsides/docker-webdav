@@ -13,7 +13,6 @@ RUN set -ex; \
     chmod -R 777 "/var/www/html"; \
     # Create directories for Dav data and lock database.
     mkdir -p "/var/lib/dav/data"; \
-    touch "/var/lib/dav/DavLock"; \
     chown -R www-data:www-data "/var/lib/dav"; \
     chmod -R 777 "/var/lib/dav"; \
     \
