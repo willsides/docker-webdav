@@ -10,6 +10,7 @@ COPY conf/ conf/
 RUN set -ex; \
     # Create empty default DocumentRoot.
     mkdir -p "/var/www/html"; \
+    chmod -R 777 "/var/www/html"; \
     # Create directories for Dav data and lock database.
     mkdir -p "/var/lib/dav/data"; \
     touch "/var/lib/dav/DavLock"; \
