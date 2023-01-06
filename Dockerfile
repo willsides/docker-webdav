@@ -1,4 +1,4 @@
-FROM httpd:alpine
+FROM httpd
 
 # These variables are inherited from the httpd:alpine image:
 # ENV HTTPD_PREFIX /usr/local/apache2
@@ -10,7 +10,6 @@ COPY conf/ conf/
 RUN set -ex; \
     # Create empty default DocumentRoot.
     mkdir -p "/var/www/html"; \
-    chmod -R 777 "/var/www/html"; \
     # Create directories for Dav data and lock database.
     mkdir -p "/var/lib/dav/data"; \
     touch "/var/lib/dav/DavLock"; \
@@ -42,10 +41,11 @@ RUN set -ex; \
     ln -s ../conf-available/dav.conf "conf/conf-enabled"; \
     ln -s ../sites-available/default.conf "conf/sites-enabled"; \
     # Install openssl if we need to generate a self-signed certificate.
-    apk update; \
-    apk upgrade; \
-    apk add --no-cache openssl; \
-    apk add --no-cache apr-util;
+    apt-get update; \
+    apt-get upgrade; \
+    apt-get install -y \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*;
 
 # Adding entrypoint and updating permissions.
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
