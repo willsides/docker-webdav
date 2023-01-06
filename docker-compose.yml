@@ -9,5 +9,8 @@ services:
       AUTH_TYPE: Digest
       USERNAME: Alice
       PASSWORD: Secret1234!
+      PUID: 1000
+      GUID: 1000
+      PUMASK: 1000
     volumes:
       - webdav-data:/var/lib/dav
