@@ -13,7 +13,7 @@ RUN set -ex; \
     # Create directories for Dav data and lock database.
     mkdir -p "/var/lib/dav/data"; \
     touch "/var/lib/dav/DavLock"; \
-    chown -R www-data:www-data "/var/lib/dav"; \
+    chown -R apache:apache "/var/lib/dav"; \
     \
     # Enable DAV modules.
     for i in dav dav_fs; do \
