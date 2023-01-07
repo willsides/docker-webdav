@@ -103,7 +103,7 @@ if [ -e /privkey.pem ] && [ -e /cert.pem ]; then
         "$HTTPD_PREFIX/conf/sites-enabled"
 fi
 
-# Create directories for Dav data and lock database.
+# Create directory for Dav data and Dav lock database.
 [ ! -d "/var/lib/dav/data" ] && mkdir -p "/var/lib/dav/data"
 [ ! -e "/var/lib/dav/DavLock" ] && touch "/var/lib/dav/DavLock"
 
