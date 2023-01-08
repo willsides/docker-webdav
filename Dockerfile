@@ -40,10 +40,11 @@ RUN set -ex; \
     apt-get update; \
     apt-get install -y libssl-dev;
 
+EXPOSE 80/tcp 443/tcp
+
 # Adding entrypoint and updating permissions.
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 
-EXPOSE 80/tcp 443/tcp
 CMD [ "httpd-foreground" ]
