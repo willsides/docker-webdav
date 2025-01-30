@@ -3,8 +3,6 @@ name: Publish Docker image
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   push_to_registry:
@@ -24,12 +22,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: jadinheaston/webdav
+          images: willsides/webdav
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/webdav:latest
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/webdav:latest
+            ${{ secrets.DOCKER_USERNAME }}/webdav:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}

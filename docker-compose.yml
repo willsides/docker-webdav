@@ -1,7 +1,7 @@
 version: '3'
 services:
   webdav:
-    image: jadinheaston/webdav
+    image: willsides/webdav
     restart: always
     ports:
       - "80:80"
