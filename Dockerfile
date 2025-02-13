@@ -37,7 +37,6 @@ RUN set -ex; \
     echo "MaxKeepAliveRequests 100" >> conf/httpd.conf; \
     echo "KeepAliveTimeout 600" >> conf/httpd.conf; \
     echo "LimitRequestBody 0" >> conf/httpd.conf; \
-    echo "ProxyTimeout 600" >> conf/httpd.conf; \
     echo "RequestReadTimeout header=600 body=600" >> conf/httpd.conf; \
     \
     # Enable dav and default site.
