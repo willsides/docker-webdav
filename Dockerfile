@@ -31,6 +31,15 @@ RUN set -ex; \
     printf '%s\n' "Include conf/sites-enabled/*.conf" \
         >> "conf/httpd.conf"; \
     \
+    # Configure for large or slow file transfers
+    echo "Timeout 600" >> conf/httpd.conf; \
+    echo "KeepAlive On" >> conf/httpd.conf; \
+    echo "MaxKeepAliveRequests 100" >> conf/httpd.conf; \
+    echo "KeepAliveTimeout 600" >> conf/httpd.conf; \
+    echo "LimitRequestBody 0" >> conf/httpd.conf; \
+    echo "ProxyTimeout 600" >> conf/httpd.conf; \
+    echo "RequestReadTimeout header=600 body=600" >> conf/httpd.conf; \
+    \
     # Enable dav and default site.
     mkdir -p "conf/conf-enabled"; \
     mkdir -p "conf/sites-enabled"; \
@@ -38,7 +47,7 @@ RUN set -ex; \
     ln -s ../sites-available/default.conf "conf/sites-enabled"; \
     # Install openssl if we need to generate a self-signed certificate.
     apt-get update; \
-    apt-get install -y libssl-dev;
+    apt-get install -y libssl-dev; 
 
 EXPOSE 80/tcp 443/tcp
 
