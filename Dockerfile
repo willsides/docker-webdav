@@ -31,14 +31,6 @@ RUN set -ex; \
     printf '%s\n' "Include conf/sites-enabled/*.conf" \
         >> "conf/httpd.conf"; \
     \
-    # Configure for large or slow file transfers
-    echo "Timeout 600" >> conf/httpd.conf; \
-    echo "KeepAlive On" >> conf/httpd.conf; \
-    echo "MaxKeepAliveRequests 100" >> conf/httpd.conf; \
-    echo "KeepAliveTimeout 600" >> conf/httpd.conf; \
-    echo "LimitRequestBody 0" >> conf/httpd.conf; \
-    echo "RequestReadTimeout header=600 body=600" >> conf/httpd.conf; \
-    \
     # Enable dav and default site.
     mkdir -p "conf/conf-enabled"; \
     mkdir -p "conf/sites-enabled"; \

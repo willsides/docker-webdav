@@ -49,13 +49,6 @@ if [ -n "$AUTH_TYPE" ]; then
     fi
     sed -i "s|AuthType .*|AuthType $AUTH_TYPE|" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
 fi
-if ! grep -q "DavMinTimeout" "$HTTPD_PREFIX/conf/conf-available/dav.conf"; then
-    echo "DavMinTimeout 600" >> "$HTTPD_PREFIX/conf/conf-available/dav.conf"
-fi
-
-if ! grep -q "LimitXMLRequestBody" "$HTTPD_PREFIX/conf/conf-available/dav.conf"; then
-    echo "LimitXMLRequestBody 0" >> "$HTTPD_PREFIX/conf/conf-available/dav.conf"
-fi
 
 # Add password hash, unless "user.passwd" already exists (i.e., bind mounted).
 if [ ! -e "/user.passwd" ]; then
@@ -122,7 +115,5 @@ chmod 600 /user.passwd
 if [ -n "$PUMASK" ]; then
     umask "$PUMASK"
 fi
-
-
 
 exec "$@"
