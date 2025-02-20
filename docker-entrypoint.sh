@@ -105,6 +105,10 @@ fi
 sed -i "s|^User .*|User #$PUID|" "$HTTPD_PREFIX/conf/httpd.conf"
 sed -i "s|^Group .*|Group #$PGID|" "$HTTPD_PREFIX/conf/httpd.conf"
 
+grep -q '^LimitRequestBody' "$HTTPD_PREFIX/conf/conf-available/dav.conf" && \
+    sed -i 's/^LimitRequestBody .*/LimitRequestBody 0/' "$HTTPD_PREFIX/conf/conf-available/dav.conf" || \
+    echo 'LimitRequestBody 0' >> "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+
 # Set correct ownership and permissions
 chown "$PUID:$PGID" "/var/lib/dav/DavLock"
 chmod 700 /var/lib/dav/data
