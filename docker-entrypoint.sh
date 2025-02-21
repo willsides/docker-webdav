@@ -13,6 +13,7 @@ set -e
 #   PUID
 #   PGID
 #   PUMASK
+#   REQUEST_BODY_LIMIT
 
 # Just in case this environment variable has gone missing.
 HTTPD_PREFIX="${HTTPD_PREFIX:-/usr/local/apache2}"
@@ -34,7 +35,7 @@ fi
 
 # Configure dav.conf
 if [ -n "$LOCATION" ]; then
-    sed -i "s|Alias .*|Alias $LOCATION /var/lib/dav/data/|" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+    sed -i "s|Alias .*|Alias ${LOCATION//\//\\/} /var/lib/dav/data/|" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
 fi
 if [ -n "$REALM" ]; then
     sed -i "s|AuthName .*|AuthName \"$REALM\"|" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
@@ -48,6 +49,21 @@ if [ -n "$AUTH_TYPE" ]; then
         exit 1
     fi
     sed -i "s|AuthType .*|AuthType $AUTH_TYPE|" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+fi
+
+if [ -n "$REQUEST_BODY_LIMIT" ]; then
+    if ! echo "$REQUEST_BODY_LIMIT" | grep -Eq '^[0-9]+$'; then
+        echo "Error: REQUEST_BODY_LIMIT must be a positive integer." >&2
+        exit 1
+    fi
+
+    echo "Setting LimitRequestBody to $REQUEST_BODY_LIMIT in dav.conf"
+
+    if grep -q '^LimitRequestBody' "$HTTPD_PREFIX/conf/conf-available/dav.conf"; then
+        sed -i "s/^LimitRequestBody .*/LimitRequestBody $REQUEST_BODY_LIMIT/" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+    else
+        echo "LimitRequestBody $REQUEST_BODY_LIMIT" >> "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+    fi
 fi
 
 # Add password hash, unless "user.passwd" already exists (i.e., bind mounted).
@@ -101,13 +117,20 @@ if ! getent passwd "$PUID" > /dev/null; then
     adduser --uid "$PUID" --system --group --no-create-home user
 fi
 
+# Ensure user exists before adding
+if ! getent passwd "$PUID" > /dev/null; then
+    # Create group with specified PGID
+    if ! getent group "$PGID" > /dev/null; then
+        addgroup --gid "$PGID" user-group
+    fi
+
+    # Create user with specified PUID and PGID
+    adduser --uid "$PUID" --gid "$PGID" --no-create-home --disabled-password --gecos "" user
+fi
+
 # Run httpd as PUID:PGID
 sed -i "s|^User .*|User #$PUID|" "$HTTPD_PREFIX/conf/httpd.conf"
 sed -i "s|^Group .*|Group #$PGID|" "$HTTPD_PREFIX/conf/httpd.conf"
-
-grep -q '^LimitRequestBody' "$HTTPD_PREFIX/conf/conf-available/dav.conf" && \
-    sed -i 's/^LimitRequestBody .*/LimitRequestBody 0/' "$HTTPD_PREFIX/conf/conf-available/dav.conf" || \
-    echo 'LimitRequestBody 0' >> "$HTTPD_PREFIX/conf/conf-available/dav.conf"
 
 # Set correct ownership and permissions
 chown "$PUID:$PGID" "/var/lib/dav/DavLock"
@@ -118,6 +141,11 @@ chmod 600 /user.passwd
 # Set umask if specified
 if [ -n "$PUMASK" ]; then
     umask "$PUMASK"
+fi
+
+if ! apachectl configtest; then
+    echo "[ERROR] Apache configuration test failed. Exiting." >&2
+    exit 1
 fi
 
 exec "$@"
