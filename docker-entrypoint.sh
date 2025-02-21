@@ -124,6 +124,10 @@ fi
 mkdir -p "/var/lib/dav/data"
 touch "/var/lib/dav/DavLock"
 
+# add PUID:PGID, ignore error
+addgroup -g $PGID -S user-group 1>/dev/null || true
+adduser -u $PUID -S user 1>/dev/null || true
+
 # Run httpd as PUID:PGID
 sed -i "s|^User .*|User #$PUID|" "$HTTPD_PREFIX/conf/httpd.conf"
 sed -i "s|^Group .*|Group #$PGID|" "$HTTPD_PREFIX/conf/httpd.conf"
