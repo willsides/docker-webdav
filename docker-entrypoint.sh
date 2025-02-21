@@ -57,7 +57,7 @@ if [ -n "$REQUEST_BODY_LIMIT" ]; then
         exit 1
     fi
 
-    echo "Setting LimitRequestBody to $REQUEST_BODY_LIMIT in dav.conf"
+    echo "Setting LimitRequestBody to $REQUEST_BODY_LIMIT"
 
     # Check if LimitRequestBody already exists
     if grep -q '^LimitRequestBody' "$HTTPD_PREFIX/conf/httpd.conf"; then
@@ -113,8 +113,8 @@ mkdir -p "/var/lib/dav/data"
 touch "/var/lib/dav/DavLock"
 
 # add PUID:PGID, ignore error
-addgroup -g $PGID -S user-group 1>/dev/null || true
-adduser -u $PUID -S user 1>/dev/null || true
+addgroup -gid $PGID user-group 1>/dev/null || true
+adduser -uid $PUID --system --no-create-home --ingroup user-group user 1>/dev/null || true
 
 # Run httpd as PUID:PGID
 sed -i "s|^User .*|User #$PUID|" "$HTTPD_PREFIX/conf/httpd.conf"
