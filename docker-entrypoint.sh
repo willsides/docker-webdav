@@ -59,16 +59,11 @@ if [ -n "$REQUEST_BODY_LIMIT" ]; then
 
     echo "Setting LimitRequestBody to $REQUEST_BODY_LIMIT in dav.conf"
 
-    if grep -q '^LimitRequestBody' "$HTTPD_PREFIX/conf/conf-available/dav.conf"; then
-        echo "Existing LimitRequestBody found, updating..."
-        sed -i "s/^LimitRequestBody .*/LimitRequestBody $REQUEST_BODY_LIMIT/" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+    # Check if LimitRequestBody already exists
+    if grep -q '^LimitRequestBody' "$HTTPD_PREFIX/conf/httpd.conf"; then
+        sed -i "s/^LimitRequestBody .*/LimitRequestBody $REQUEST_BODY_LIMIT/" "$HTTPD_PREFIX/conf/httpd.conf"
     else
-        echo "No existing LimitRequestBody, appending..."
-        printf "LimitRequestBody $REQUEST_BODY_LIMIT" >> "$HTTPD_PREFIX/conf/conf-available/dav.conf"
-
-        # Verify immediately after writing
-        echo "Verifying the contents of dav.conf after appending:"
-        cat "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+        printf "LimitRequestBody %s\n" "$REQUEST_BODY_LIMIT" >> "$HTTPD_PREFIX/conf/httpd.conf"
     fi
 fi
 
