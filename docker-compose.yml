@@ -12,5 +12,6 @@ services:
       PUID: 1000
       GUID: 1000
       PUMASK: 1000
+      REQUEST_BODY_LIMIT: 1000000000
     volumes:
       - webdav-data:/var/lib/dav
