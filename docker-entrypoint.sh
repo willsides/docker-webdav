@@ -51,17 +51,6 @@ if [ -n "$AUTH_TYPE" ]; then
     sed -i "s|AuthType .*|AuthType $AUTH_TYPE|" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
 fi
 
-echo "Running as user: $(whoami)"
-echo "Effective UID: $(id -u)"
-echo "Effective GID: $(id -g)"
-
-# Check file permissions
-ls -l "$HTTPD_PREFIX/conf/conf-available/dav.conf"
-
-# Check parent directory permissions
-ls -ld "$HTTPD_PREFIX/conf/conf-available/"
-
-
 if [ -n "$REQUEST_BODY_LIMIT" ]; then
     if ! echo "$REQUEST_BODY_LIMIT" | grep -Eq '^[0-9]+$'; then
         echo "Error: REQUEST_BODY_LIMIT must be a positive integer." >&2
@@ -75,7 +64,11 @@ if [ -n "$REQUEST_BODY_LIMIT" ]; then
         sed -i "s/^LimitRequestBody .*/LimitRequestBody $REQUEST_BODY_LIMIT/" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
     else
         echo "No existing LimitRequestBody, appending..."
-        echo "LimitRequestBody $REQUEST_BODY_LIMIT" >> "$HTTPD_PREFIX/conf/conf-available/dav.conf"
+        echo "LimitRequestBody $REQUEST_BODY_LIMIT" | tee -a "$HTTPD_PREFIX/conf/conf-available/dav.conf" > /dev/null
+
+        # Verify immediately after writing
+        echo "Verifying the contents of dav.conf after appending:"
+        cat "$HTTPD_PREFIX/conf/conf-available/dav.conf"
     fi
 fi
 
