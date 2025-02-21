@@ -111,12 +111,6 @@ fi
 mkdir -p "/var/lib/dav/data"
 touch "/var/lib/dav/DavLock"
 
-# Ensure user exists before adding
-if ! getent passwd "$PUID" > /dev/null; then
-    echo "Creating user with UID: $PUID and GID: $PGID"
-    adduser --uid "$PUID" --gid "$PGID" --no-create-home --disabled-password --gecos "" user
-fi
-
 # Run httpd as PUID:PGID
 sed -i "s|^User .*|User #$PUID|" "$HTTPD_PREFIX/conf/httpd.conf"
 sed -i "s|^Group .*|Group #$PGID|" "$HTTPD_PREFIX/conf/httpd.conf"
