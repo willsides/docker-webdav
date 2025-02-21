@@ -64,7 +64,7 @@ if [ -n "$REQUEST_BODY_LIMIT" ]; then
         sed -i "s/^LimitRequestBody .*/LimitRequestBody $REQUEST_BODY_LIMIT/" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
     else
         echo "No existing LimitRequestBody, appending..."
-        echo "LimitRequestBody $REQUEST_BODY_LIMIT" | tee -a "$HTTPD_PREFIX/conf/conf-available/dav.conf" > /dev/null
+        printf "LimitRequestBody $REQUEST_BODY_LIMIT" > "$HTTPD_PREFIX/conf/conf-available/dav.conf"
 
         # Verify immediately after writing
         echo "Verifying the contents of dav.conf after appending:"
