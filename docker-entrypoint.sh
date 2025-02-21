@@ -114,7 +114,7 @@ touch "/var/lib/dav/DavLock"
 
 # add PUID:PGID, ignore error
 addgroup -gid $PGID user-group 1>/dev/null || true
-adduser -uid $PUID --system --no-create-home --ingroup user-group user 1>/dev/null || true
+adduser -uid $PUID --system --ingroup user-group user 1>/dev/null || true
 
 # Run httpd as PUID:PGID
 sed -i "s|^User .*|User #$PUID|" "$HTTPD_PREFIX/conf/httpd.conf"
