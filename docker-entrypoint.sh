@@ -51,13 +51,12 @@ if [ -n "$AUTH_TYPE" ]; then
     sed -i "s|AuthType .*|AuthType $AUTH_TYPE|" "$HTTPD_PREFIX/conf/conf-available/dav.conf"
 fi
 
+# Add LimitRequestBody directive if specified.
 if [ -n "$REQUEST_BODY_LIMIT" ]; then
     if ! echo "$REQUEST_BODY_LIMIT" | grep -Eq '^[0-9]+$'; then
         echo "Error: REQUEST_BODY_LIMIT must be a positive integer." >&2
         exit 1
     fi
-
-    echo "Setting LimitRequestBody to $REQUEST_BODY_LIMIT"
 
     # Check if LimitRequestBody already exists
     if grep -q '^LimitRequestBody' "$HTTPD_PREFIX/conf/httpd.conf"; then
