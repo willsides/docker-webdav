@@ -113,12 +113,6 @@ touch "/var/lib/dav/DavLock"
 
 # Ensure user exists before adding
 if ! getent passwd "$PUID" > /dev/null; then
-    addgroup --gid "$PGID" --system user-group
-    adduser --uid "$PUID" --system --group --no-create-home user
-fi
-
-# Ensure user exists before adding
-if ! getent passwd "$PUID" > /dev/null; then
     # Create group with specified PGID
     if ! getent group "$PGID" > /dev/null; then
         addgroup --gid "$PGID" user-group
